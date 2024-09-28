@@ -1,0 +1,28 @@
+// aiService.js
+import { PythonShell } from 'python-shell';
+
+export const predictTaskDuration = (complexity, size) => {
+    const options = {
+        scriptPath: 'C:\\Users\\user\\Desktop\\teamsync\\pythonmodels',
+        args: [complexity, size]
+    };
+
+    return new Promise((resolve, reject) => {
+        PythonShell.run('taskschedulemodel.py', options, (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                const durationInDays = parseFloat(results[0]);
+                resolve(durationInDays);
+            }
+        });
+    });
+};
+
+export const predictTaskDates = (complexity, size) => {
+    const durationInDays = predictTaskDuration(complexity, size); // Appel direct de predictTaskDuration
+    const startDate = new Date();
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + durationInDays);
+    return { startDate, endDate };
+};
